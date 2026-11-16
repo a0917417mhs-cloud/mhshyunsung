@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#a8d5ea">
+<title>나의 글방</title>
+<meta name="description" content="배운 것과 하루의 생각을 천천히 적어 두는 글 모음입니다.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9B%B0%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+
+<!--
+  ┌─ 내용을 바꾸는 방법 ──────────────────────────────────────────┐
+  │ 1. 사이트 이름: "나의 글방" 을 찾아서 원하는 이름으로 바꾸세요. │
+  │ 2. 내 이름: "(이름)" 을 찾아서 내 이름으로 바꾸세요.           │
+  │ 3. 소개글: <section id="about"> 안의 문장을 고치세요.           │
+  │ 4. 새 글 추가: <article class="post"> ... </article> 한 덩어리를 │
+  │    통째로 복사해서 맨 위에 붙여넣고 내용만 바꾸세요.            │
+  └──────────────────────────────────────────────────────────────┘
+-->
+
+<style>
+  :root {
+    --ink: #17303b;
+    --ink-soft: #3f5a65;
+    --sky: #a8d5ea;
+    --panel: #f7fbf9;
+    --line: #d3e2dc;
+    --accent: #2b6a5b;
+    --code-bg: #e9f2ee;
+    --focus: #0b5cad;
+    --serif: "Gowun Batang", "Nanum Myeongjo", "Noto Serif KR", "Apple SD Gothic Neo", serif;
+    --sans: "Gowun Dodum", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+    color-scheme: light;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  body {
+    margin: 0;
+    font-family: var(--sans);
+    font-size: 1.125rem;
+    line-height: 1.85;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    color: var(--ink);
+    background: linear-gradient(#7dbbe3, #eef6f1) fixed;
+    min-height: 100vh;
+  }
+
+  #scene {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    display: block;
+  }
+
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
+
+  .skip {
+    position: absolute; left: 12px; top: -60px;
+    background: var(--ink); color: #fff; padding: 10px 16px; border-radius: 8px; z-index: 20;
+  }
+  .skip:focus { top: 12px; }
+
+  /* ---------- 상단 메뉴 ---------- */
+  .site-header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 clamp(16px, 4vw, 40px);
+    background: rgba(247, 251, 249, 0.72);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(23, 48, 59, 0.08);
+  }
+  .brand {
+    font-family: var(--serif); font-weight: 700; font-size: 1.3rem;
+    text-decoration: none; letter-spacing: 0.01em;
+  }
+  .site-nav { display: flex; gap: 6px; }
+  .site-nav a {
+    display: inline-flex; align-items: center; min-height: 44px;
+    padding: 0 14px; border-radius: 22px; text-decoration: none; font-size: 1.05rem;
+  }
+  .site-nav a:hover { background: rgba(43, 106, 91, 0.12); }
+
+  /* ---------- 첫 화면 ---------- */
+  .hero {
+    min-height: 92vh;
+    min-height: 92svh;
+    padding: calc(64px + 11vh) clamp(20px, 6vw, 72px) 0;
+  }
+  .hero h1 {
+    margin: 0;
+    font-family: var(--serif); font-weight: 700;
+    font-size: clamp(3rem, 10vw, 6.5rem);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .hero p {
+    margin: 18px 0 0; max-width: 24em;
+    font-size: clamp(1.15rem, 2.4vw, 1.4rem); color: var(--ink);
+  }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-height: 50px; padding: 0 24px; border-radius: 26px;
+    font: inherit; font-size: 1.05rem; text-decoration: none; cursor: pointer;
+    border: 1.5px solid var(--ink);
+  }
+  .btn-solid { background: var(--ink); color: #fff; }
+  .btn-solid:hover { background: #0f222b; }
+  .btn-ghost { background: rgba(255, 255, 255, 0.55); color: var(--ink); }
+  .btn-ghost:hover { background: rgba(255, 255, 255, 0.85); }
+
+  /* ---------- 본문 종이 ---------- */
+  .panel {
+    position: relative;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: clamp(40px, 7vw, 76px) clamp(20px, 5vw, 64px) 72px;
+    background: var(--panel);
+    border-radius: 28px 28px 0 0;
+    box-shadow: 0 -12px 40px rgba(23, 48, 59, 0.12);
+  }
+  section { scroll-margin-top: 80px; }
+  section + section { margin-top: 64px; }
+  h2 {
+    margin: 0 0 18px;
+    font-family: var(--serif); font-weight: 700;
+    font-size: clamp(1.8rem, 4vw, 2.3rem); line-height: 1.3;
+  }
+  #about p { margin: 0 0 14px; max-width: 34em; }
+
+  /* ---------- 글 목록 ---------- */
+  .post-list { border-bottom: 1px solid var(--line); }
+  .post { border-top: 1px solid var(--line); }
+  .post summary {
+    list-style: none; cursor: pointer;
+    display: block; position: relative;
+    padding: 24px 56px 24px 0;
+  }
+  .post summary::-webkit-details-marker { display: none; }
+  .post summary::after {
+    content: ""; position: absolute; right: 8px; top: 50%;
+    width: 12px; height: 12px; margin-top: -10px;
+    border-right: 2.5px solid var(--ink-soft); border-bottom: 2.5px solid var(--ink-soft);
+    transform: rotate(45deg); transition: transform 0.2s ease;
+  }
+  .post details[open] summary::after { transform: rotate(-135deg); margin-top: -4px; }
+  .post-meta { display: flex; align-items: center; gap: 10px; font-size: 0.95rem; color: var(--ink-soft); }
+  .tag {
+    padding: 0 10px; border-radius: 12px; line-height: 1.6;
+    background: var(--code-bg); color: var(--accent); font-size: 0.88rem;
+  }
+  .post h3 {
+    margin: 4px 0 2px;
+    font-family: var(--serif); font-weight: 700; font-size: 1.45rem; line-height: 1.4;
+  }
+  .post summary:hover h3 { color: var(--accent); }
+  .excerpt { display: block; color: var(--ink-soft); font-size: 1.02rem; line-height: 1.6; }
+
+  .post-body { padding: 0 0 32px; max-width: 36em; }
+  .post-body p { margin: 0 0 14px; }
+  .post-body ol { margin: 0 0 14px; padding-left: 1.4em; }
+  .post-body li { margin-bottom: 6px; }
+  .post-body pre {
+    margin: 0 0 16px; padding: 16px 18px; overflow-x: auto;
+    background: var(--code-bg); border-radius: 10px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, "D2Coding", monospace;
+    font-size: 0.95rem; line-height: 1.7;
+  }
+
+  .site-footer {
+    max-width: 860px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 64px) 40px;
+    background: var(--panel); color: var(--ink-soft); font-size: 0.95rem;
+  }
+
+  @media (max-width: 560px) {
+    body { font-size: 1.06rem; }
+    .site-nav a { padding: 0 10px; }
+    .panel { border-radius: 22px 22px 0 0; }
+  }
+</style>
+</head>
+
+<body>
+  <canvas id="scene" aria-hidden="true"></canvas>
+  <a class="skip" href="#main">본문으로 바로가기</a>
+
+  <header class="site-header">
+    <a class="brand" href="#top">나의 글방</a>
+    <nav class="site-nav" aria-label="주요 메뉴">
+      <a href="#about">소개</a>
+      <a href="#posts">글</a>
+    </nav>
+  </header>
+
+  <div id="top" class="hero">
+    <h1>나의 글방</h1>
+    <p>배운 것과 하루의 생각을 천천히 적어 둡니다.</p>
+    <div class="hero-actions">
+      <a class="btn btn-solid" href="#posts">글 읽기</a>
+      <button class="btn btn-ghost" id="reseed" type="button">다른 풍경 보기</button>
+    </div>
+  </div>
+
+  <main id="main" class="panel">
+
+    <section id="about">
+      <h2>소개</h2>
+      <p>안녕하세요, 저는 (이름)입니다. 배우고 느낀 것을 이곳에 글로 남기고 있어요.</p>
+      <p>아직 글이 많지 않지만 천천히 하나씩 채워 가려고 합니다. 편하게 둘러봐 주세요.</p>
+    </section>
+
+    <section id="posts">
+      <h2>글</h2>
+
+      <div class="post-list">
+
+        <!-- ▼ 새 글은 이 덩어리를 복사해서 맨 위에 붙여넣으세요 ▼ -->
+        <article class="post">
+          <details name="posts">
+            <summary>
+              <span class="post-meta">
+                <time datetime="2026-11-16">2026년 11월 16일</time>
+                <span class="tag">샘플</span>
+              </span>
+              <h3>내 웹사이트 배포하기</h3>
+              <span class="excerpt">깃허브 페이지로 사이트를 공개하는 순서를 적어 두었어요.</span>
+            </summary>
+            <div class="post-body">
+              <p>만든 사이트는 깃허브 페이지(GitHub Pages)를 쓰면 무료로 공개할 수 있어요. 순서는 이렇습니다.</p>
+              <ol>
+                <li>저장소에 <code>index.html</code> 파일을 올립니다.</li>
+                <li>저장소의 Settings에서 Pages 메뉴로 들어갑니다.</li>
+                <li>Branch를 main, 폴더를 / (root)로 고르고 Save를 누릅니다.</li>
+                <li>1~2분 기다리면 사이트 주소가 나타납니다.</li>
+              </ol>
+              <p>주소는 <code>https://계정이름.github.io/저장소이름/</code> 모양이에요.</p>
+            </div>
+          </details>
+        </article>
+        <!-- ▲ 여기까지 ▲ -->
+
+        <article class="post">
+          <details name="posts">
+            <summary>
+              <span class="post-meta">
+                <time datetime="2026-11-15">2026년 11월 15일</time>
+                <span class="tag">샘플</span>
+              </span>
+              <h3>클로드와 깃허브 연결하기</h3>
+              <span class="excerpt">저장소를 불러와 파일을 읽어 본 과정을 기록했어요.</span>
+            </summary>
+            <div class="post-body">
+              <p>깃허브 저장소 주소를 알려주면 클로드가 파일 내용을 읽어 줍니다. 제 저장소에는 README.md와 연습용 글 파일이 있었어요.</p>
+              <p>다만 저장소에 직접 올리는 일은 계정 로그인이 필요해서 제가 직접 해야 했습니다. 만든 파일을 내려받아 깃허브 웹에서 올렸어요.</p>
+            </div>
+          </details>
+        </article>
+
+        <article class="post">
+          <details name="posts">
+            <summary>
+              <span class="post-meta">
+                <time datetime="2026-11-14">2026년 11월 14일</time>
+                <span class="tag">샘플</span>
+              </span>
+              <h3>마크다운으로 글쓰기 연습</h3>
+              <span class="excerpt">제목, 굵은 글씨, 목록을 만드는 기본 문법을 정리했어요.</span>
+            </summary>
+            <div class="post-body">
+              <p>마크다운은 기호 몇 개로 글의 모양을 정하는 방법입니다. 깃허브의 README 파일도 마크다운으로 쓰여 있어요.</p>
+<pre><code># 가장 큰 제목
+## 중간 제목
+**굵은 글씨**
+- 목록 하나
+- 목록 둘</code></pre>
+              <p>제목 기호(#)는 뒤에 한 칸을 띄우고 제목을 씁니다. #이 많아질수록 제목이 작아져요.</p>
+            </div>
+          </details>
+        </article>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <small>© 2026 (이름)</small>
+  </footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var canvas = document.getElementById("scene");
+  var ctx = canvas.getContext("2d");
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var STEP = 6, MARGIN = 90;
+  var W = 0, H = 0, DPR = 1;
+  var seed = 20261116;
+  var layers = [], clouds = [];
+  var scrollT = 0, scrollC = 0, pxT = 0, pxC = 0;
+
+  /* ---------- 난수와 노이즈 ---------- */
+  function rng(a) {
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function makeNoise(rand) {
+    var v = new Float32Array(256), i;
+    for (i = 0; i < 256; i++) v[i] = rand();
+    return function (x) {
+      var i0 = Math.floor(x), f = x - i0, s = f * f * (3 - 2 * f);
+      return v[i0 & 255] * (1 - s) + v[(i0 + 1) & 255] * s;
+    };
+  }
+  function fbm(n, x) {
+    var a = 0.5, f = 1, s = 0, t = 0;
+    for (var o = 0; o < 5; o++) { s += n(x * f) * a; t += a; a *= 0.5; f *= 2.03; }
+    return s / t;
+  }
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+  /* ---------- 풍경 만들기 ---------- */
+  var DEFS = [
+    { base: 0.50, amp: 0.27, freq: 2.1, peak: true,  top: "#b3cce0", bot: "#e4eff3", kx: 4,  ky: 0.04 },
+    { base: 0.61, amp: 0.22, freq: 2.8, peak: true,  top: "#8db1c4", bot: "#cfe3e6", kx: 8,  ky: 0.09 },
+    { base: 0.73, amp: 0.17, freq: 3.6, peak: false, top: "#5b8f8b", bot: "#a5cac2", kx: 14, ky: 0.16 },
+    { base: 0.85, amp: 0.11, freq: 4.8, peak: false, top: "#3b7360", bot: "#2a5545", kx: 22, ky: 0.26, trees: true }
+  ];
+
+  function ridgeShape(n, u, peak) {
+    var v = fbm(n, u);
+    var t = clamp((v - 0.3) / 0.4, 0, 1);
+    if (peak) {
+      var r = 1 - Math.abs(2 * v - 1);
+      var sharp = Math.pow(clamp((r - 0.55) / 0.45, 0, 1), 1.3);
+      t = t * 0.55 + sharp * 0.45;
+    }
+    return t;
+  }
+
+  function cloudSprite(rand) {
+    var c = document.createElement("canvas");
+    c.width = 480; c.height = 170;
+    var g = c.getContext("2d"), n = 7;
+    for (var j = 0; j < n; j++) {
+      var p = j / (n - 1);
+      var cx = 70 + p * 340 + (rand() - 0.5) * 30;
+      var arch = Math.sin(p * Math.PI);
+      var cy = 112 - arch * 38 * (0.6 + rand() * 0.6);
+      var r = 34 + rand() * 24 + arch * 20;
+      var gr = g.createRadialGradient(cx, cy, 0, cx, cy, r);
+      gr.addColorStop(0, "rgba(255,255,255,0.95)");
+      gr.addColorStop(0.55, "rgba(255,255,255,0.75)");
+      gr.addColorStop(1, "rgba(255,255,255,0)");
+      g.fillStyle = gr;
+      g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.fill();
+    }
+    return c;
+  }
+
+  function build() {
+    var rand = rng(seed);
+    var count = Math.ceil((W + MARGIN * 2) / STEP) + 1;
+
+    layers = DEFS.map(function (d) {
+      var noise = makeNoise(rand), off = rand() * 100;
+      var ys = new Float32Array(count), minY = 1e9;
+      for (var j = 0; j < count; j++) {
+        var x = -MARGIN + j * STEP;
+        var u = (x / W) * d.freq + off;
+        ys[j] = (d.base - d.amp * ridgeShape(noise, u, d.peak)) * H;
+        if (ys[j] < minY) minY = ys[j];
+      }
+      var L = { d: d, ys: ys, minY: minY, trees: [] };
+
+      if (d.trees) {
+        var clearing = makeNoise(rand), sc = clamp(W / 1400, 0.6, 1.2);
+        var x2 = -MARGIN + 10;
+        while (x2 < W + MARGIN) {
+          x2 += (14 + rand() * 34) * sc;
+          if (clearing((x2 / W) * 3 + off) > 0.62) { x2 += 40 * sc; continue; }
+          L.trees.push({ x: x2, s: H * (0.035 + rand() * 0.03) });
+        }
+      }
+      return L;
+    });
+
+    var scale = clamp(W / 1400, 0.55, 1.15) * 0.9;
+    clouds = [];
+    for (var i = 0; i < 6; i++) {
+      var s = 0.55 + rand() * 0.9;
+      var w = 480 * s * scale;
+      clouds.push({
+        sprite: cloudSprite(rand),
+        w: w, h: 170 * s * scale,
+        x: rand() * (W + w) - w * 0.5,
+        y: H * (0.05 + rand() * 0.28),
+        v: 5 + rand() * 11,
+        a: 0.55 + rand() * 0.4,
+        k: 0.05 + rand() * 0.1,
+        px: -(3 + rand() * 6)
+      });
+    }
+  }
+
+  /* ---------- 그리기 ---------- */
+  function tree(x, y, s) {
+    var pts = [[0, -1], [0.26, -0.62], [0.14, -0.62], [0.34, -0.28], [0.18, -0.28], [0.18, 0.1]];
+    var i;
+    ctx.beginPath();
+    ctx.moveTo(x + pts[0][0] * s, y + pts[0][1] * s);
+    for (i = 1; i < pts.length; i++) ctx.lineTo(x + pts[i][0] * s, y + pts[i][1] * s);
+    for (i = pts.length - 1; i >= 1; i--) ctx.lineTo(x - pts[i][0] * s, y + pts[i][1] * s);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function draw() {
+    var sky = ctx.createLinearGradient(0, 0, 0, H * 0.8);
+    sky.addColorStop(0, "#7dbbe3");
+    sky.addColorStop(0.55, "#b8dcef");
+    sky.addColorStop(1, "#eef6f1");
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, W, H);
+
+    var m = Math.min(W, H);
+    var sx = W * 0.78 - pxC * 6, sy = H * 0.2 - scrollC * 0.05;
+    var glow = ctx.createRadialGradient(sx, sy, 0, sx, sy, m * 0.55);
+    glow.addColorStop(0, "rgba(255,250,225,0.95)");
+    glow.addColorStop(0.12, "rgba(255,248,215,0.7)");
+    glow.addColorStop(0.35, "rgba(255,246,220,0.18)");
+    glow.addColorStop(1, "rgba(255,246,220,0)");
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = "#fffbea";
+    ctx.beginPath(); ctx.arc(sx, sy, m * 0.045, 0, Math.PI * 2); ctx.fill();
+
+    for (var c = 0; c < clouds.length; c++) {
+      var cl = clouds[c];
+      ctx.globalAlpha = cl.a;
+      ctx.drawImage(cl.sprite, cl.x + pxC * cl.px, cl.y - scrollC * cl.k, cl.w, cl.h);
+    }
+    ctx.globalAlpha = 1;
+
+    for (var i = 0; i < layers.length; i++) {
+      var L = layers[i], d = L.d;
+      var oy = -scrollC * d.ky, ox = pxC * d.kx;
+      ctx.beginPath();
+      ctx.moveTo(-MARGIN + ox, L.ys[0] + oy);
+      for (var j = 1; j < L.ys.length; j++) ctx.lineTo(-MARGIN + j * STEP + ox, L.ys[j] + oy);
+      ctx.lineTo(W + MARGIN + ox, H + 500);
+      ctx.lineTo(-MARGIN + ox, H + 500);
+      ctx.closePath();
+      var top = L.minY + oy;
+      var gr = ctx.createLinearGradient(0, top, 0, top + H * 0.42);
+      gr.addColorStop(0, d.top);
+      gr.addColorStop(1, d.bot);
+      ctx.fillStyle = gr;
+      ctx.fill();
+
+      if (L.trees.length) {
+        ctx.fillStyle = "#234a3b";
+        for (var t = 0; t < L.trees.length; t++) {
+          var tr = L.trees[t];
+          var idx = clamp(Math.round((tr.x + MARGIN) / STEP), 0, L.ys.length - 1);
+          tree(tr.x + ox, L.ys[idx] + oy + tr.s * 0.08, tr.s);
+        }
+      }
+    }
+  }
+
+  /* ---------- 움직임 ---------- */
+  var last = 0;
+  function frame(t) {
+    var dt = Math.min(0.05, (t - last) / 1000 || 0);
+    last = t;
+    scrollC += (scrollT - scrollC) * 0.12;
+    pxC += (pxT - pxC) * 0.05;
+    for (var i = 0; i < clouds.length; i++) {
+      var c = clouds[i];
+      c.x += c.v * dt;
+      if (c.x > W + 40) c.x = -c.w;
+    }
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  function resize(force) {
+    var w = window.innerWidth, h = window.innerHeight;
+    if (!force && w === W && Math.abs(h - H) < 140) return;
+    W = w; H = h;
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(W * DPR);
+    canvas.height = Math.round(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    build();
+    if (reduceMotion) draw();
+  }
+
+  window.addEventListener("resize", function () { resize(false); });
+
+  document.getElementById("reseed").addEventListener("click", function () {
+    seed = (Math.random() * 1e9) | 0;
+    build();
+    if (reduceMotion) draw();
+  });
+
+  if (!reduceMotion) {
+    window.addEventListener("scroll", function () {
+      scrollT = Math.min(window.scrollY || 0, 700);
+    }, { passive: true });
+    window.addEventListener("pointermove", function (e) {
+      pxT = (e.clientX / W - 0.5) * 2;
+    }, { passive: true });
+    resize(true);
+    requestAnimationFrame(frame);
+  } else {
+    resize(true);
+  }
+})();
+</script>
+</body>
+</html>
